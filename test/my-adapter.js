@@ -33,8 +33,8 @@ function newPromise() {
             promise.state = 'resolved';
         },
         then: (successCb, errorCb) => {
-            if (successCb) { promise.successCbs.push(cb) };
-            if (errorCb) { promise.errorCbs.push(cb) };
+            if (successCb) { promise.successCbs.push(successCb) };
+            if (errorCb) { promise.errorCbs.push(errorCb) };
             return this;
         }
     }
