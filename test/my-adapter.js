@@ -1,3 +1,5 @@
+const u = require(`./utilities`);
+
 module.exports = {
     resolved: resolved,
 
@@ -39,7 +41,14 @@ function newPromise() {
 
             // promise is fulfilled, so call immediately            
             var fn = promise.state === 'resolved' ? onFulfilled : onRejected;
-            return fn.call(promise.value)
+            if (fn && typeof (fn) == 'function') {
+                var result = fn.call(this, promise.value);
+                return result;
+            }
+            
+            console.log(`the case you are looking for here. this is ${u.prettyObject(this)}`);
+            
+            return this;
         },
         reject: reason => {
             if (promise.state != 'pending') { return; } // Dont change state if we are fulfilled.

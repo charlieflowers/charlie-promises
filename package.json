@@ -4,7 +4,7 @@
   "description": "my own impl of aplus promises for learning purposes",
   "main": "index.js",
   "scripts": {
-    "test": "promises-aplus-tests test/my-adapter --reporter min"
+    "test": "promises-aplus-tests test/my-adapter 2>&1 | tee output.txt"
   },
   "author": "",
   "license": "ISC",
