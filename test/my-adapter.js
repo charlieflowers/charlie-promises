@@ -4,9 +4,9 @@ module.exports = {
     rejected: rejected,
 
     deferred: () => {
-        
+
         var p = newPromise();
-        
+
         return {
             promise: p,
             resolve: p.resolve,
@@ -30,10 +30,16 @@ function newPromise() {
             promise.state = 'resolved';
             return this;
         },
-        then: (successCb, errorCb) => {
-            if (successCb) { promise.successCbs.push(successCb) };
-            if (errorCb) { promise.errorCbs.push(errorCb) };
-            return this;
+        then: (onFulfilled, onRejected) => {
+            if (promise.state === 'pending') {
+                if (onFulfilled && typeof (onFulfilled) == 'function') { promise.successCbs.push(onFulfilled) };
+                if (onRejected && typeof (onRejected) == 'function') { promise.errorCbs.push(onRejected) };
+                return this;
+            }
+
+            // promise is fulfilled, so call immediately            
+            var fn = promise.state === 'resolved' ? onFulfilled : onRejected;
+            return fn.call(promise.value)
         },
         reject: reason => {
             if (promise.state != 'pending') { return; } // Dont change state if we are fulfilled.
@@ -57,3 +63,7 @@ function rejected(value) {
 
     return p;
 }
+
+var p = rejected(42);
+
+console.log(`p.then is ${p.then}`);
