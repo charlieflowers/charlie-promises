@@ -6,11 +6,12 @@ module.exports = {
     },
 
     deferred: () => {
+        
+        var p = newPromise();
+        
         return {
-            promise: {},
-            resolve: value => {
-
-            },
+            promise: p,
+            resolve: p.resolve,
             reject: reason => {
 
             }
@@ -22,13 +23,13 @@ function newPromise() {
     var promise = {
         successCbs: [],
         errorCbs: [],
-        state: 'unsettled',
+        state: 'pending',
         value: undefined,
     };
 
     return {
         resolve: val => {
-            if (promise.state != 'unsettled') { return; } // Dont change state if we are fulfilled.
+            if (promise.state != 'pending') { return; } // Dont change state if we are fulfilled.
             promise.val = val;
             promise.state = 'resolved';
         },
