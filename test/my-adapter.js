@@ -34,7 +34,14 @@ function newPromise() {
         resolve: val => {
             if (promise.state != 'pending') { return promiseResult; } // Dont change state if we are fulfilled.
             promise.val = val;
-            promise.state = 'resolved';
+            promise.state = 'fulfilled';
+            
+            promise.successCbs.forEach(function(element) {
+                var result = element.call(promiseResult, promise.val);    
+                if (isPromise(result)) { return result; }
+                return resolved(result);
+            }, this);
+            
             return promiseResult;
         },
         then: (onFulfilled, onRejected) => {
@@ -45,9 +52,9 @@ function newPromise() {
             }
 
             // promise is fulfilled, so call immediately            
-            var fn = promise.state === 'resolved' ? onFulfilled : onRejected;
+            var fn = promise.state === 'fulfilled' ? onFulfilled : onRejected;
             if (fn && typeof (fn) == 'function') {
-                var result = fn.call(this, promise.value);
+                var result = fn.call(promiseResult, promise.value);
                 if (isPromise(result)) { return result; }
 
                 return resolved(result);
