@@ -1,4 +1,4 @@
-const u = require(`./utilities`);
+const u = require(`./../utilities`);
 
 module.exports = {
     resolved: resolved,
