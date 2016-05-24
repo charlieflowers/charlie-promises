@@ -17,6 +17,11 @@ module.exports = {
     }
 }
 
+function isPromise(x) {
+    if (x && x.then && typeof (x.then) == 'function') return true;
+    return false;
+}
+
 function newPromise() {
     var promise = {
         successCbs: [],
@@ -25,38 +30,42 @@ function newPromise() {
         value: undefined,
     };
 
-    return {
+    var promiseResult = {
         resolve: val => {
             if (promise.state != 'pending') { return; } // Dont change state if we are fulfilled.
             promise.val = val;
             promise.state = 'resolved';
-            return this;
+            return promiseResult;
         },
         then: (onFulfilled, onRejected) => {
             if (promise.state === 'pending') {
                 if (onFulfilled && typeof (onFulfilled) == 'function') { promise.successCbs.push(onFulfilled) };
                 if (onRejected && typeof (onRejected) == 'function') { promise.errorCbs.push(onRejected) };
-                return this;
+                return promiseResult;
             }
 
             // promise is fulfilled, so call immediately            
             var fn = promise.state === 'resolved' ? onFulfilled : onRejected;
             if (fn && typeof (fn) == 'function') {
                 var result = fn.call(this, promise.value);
-                return result;
+                if (isPromise(result)) { return result; }
+
+                return resolved(result);
             }
-            
-            console.log(`the case you are looking for here. this is ${u.prettyObject(this)}`);
-            
+
+            console.log(`the case you are looking for here. this is ${u.prettyObject(promiseResult)}`);
+
             return this;
         },
         reject: reason => {
             if (promise.state != 'pending') { return; } // Dont change state if we are fulfilled.
             promise.val = reason;
             promise.state = 'rejected';
-            return this;
+            return promiseResult;
         }
     }
+
+    return promiseResult;
 }
 
 function resolved(value) {
