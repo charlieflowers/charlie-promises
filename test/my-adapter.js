@@ -1,9 +1,7 @@
 module.exports = {
     resolved: resolved,
 
-    rejected: reason => {
-
-    },
+    rejected: rejected,
 
     deferred: () => {
         
@@ -39,7 +37,7 @@ function newPromise() {
         },
         reject: reason => {
             if (promise.state != 'pending') { return; } // Dont change state if we are fulfilled.
-            promise.val = val;
+            promise.val = reason;
             promise.state = 'rejected';
             return this;
         }
@@ -49,6 +47,13 @@ function newPromise() {
 function resolved(value) {
     var p = newPromise();
     p.resolve(value);
+
+    return p;
+}
+
+function rejected(value) {
+    var p = newPromise();
+    p.reject(value);
 
     return p;
 }
