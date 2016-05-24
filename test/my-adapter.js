@@ -19,18 +19,22 @@ module.exports = {
 }
 
 function newPromise() {
-    return {
+    var promise = {
         successCbs: [],
         errorCbs: [],
         state: 'unsettled',
         value: undefined,
+    };
+
+    return {
         resolve: val => {
-            this.val = val;
-            this.state = 'resolved';
+            if (promise.state != 'unsettled') { return; } // Dont change state if we are fulfilled.
+            promise.val = val;
+            promise.state = 'resolved';
         },
         then: (successCb, errorCb) => {
-            if (successCb) { this.successCbs.push(cb) };
-            if (errorCb) { this.errorCbs.push(cb) };
+            if (successCb) { promise.successCbs.push(cb) };
+            if (errorCb) { promise.errorCbs.push(cb) };
             return this;
         }
     }
