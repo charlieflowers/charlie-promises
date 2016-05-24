@@ -12,9 +12,7 @@ module.exports = {
         return {
             promise: p,
             resolve: p.resolve,
-            reject: reason => {
-
-            }
+            reject: p.reject
         }
     }
 }
@@ -32,10 +30,17 @@ function newPromise() {
             if (promise.state != 'pending') { return; } // Dont change state if we are fulfilled.
             promise.val = val;
             promise.state = 'resolved';
+            return this;
         },
         then: (successCb, errorCb) => {
             if (successCb) { promise.successCbs.push(successCb) };
             if (errorCb) { promise.errorCbs.push(errorCb) };
+            return this;
+        },
+        reject: reason => {
+            if (promise.state != 'pending') { return; } // Dont change state if we are fulfilled.
+            promise.val = val;
+            promise.state = 'rejected';
             return this;
         }
     }
