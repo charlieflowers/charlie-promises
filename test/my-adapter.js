@@ -32,7 +32,7 @@ function newPromise() {
 
     var promiseResult = {
         resolve: val => {
-            if (promise.state != 'pending') { return; } // Dont change state if we are fulfilled.
+            if (promise.state != 'pending') { return promiseResult; } // Dont change state if we are fulfilled.
             promise.val = val;
             promise.state = 'resolved';
             return promiseResult;
@@ -53,12 +53,10 @@ function newPromise() {
                 return resolved(result);
             }
 
-            console.log(`the case you are looking for here. this is ${u.prettyObject(promiseResult)}`);
-
-            return this;
+            return promiseResult;
         },
         reject: reason => {
-            if (promise.state != 'pending') { return; } // Dont change state if we are fulfilled.
+            if (promise.state != 'pending') { return promiseResult; } // Dont change state if we are fulfilled.
             promise.val = reason;
             promise.state = 'rejected';
             return promiseResult;
